@@ -1,0 +1,108 @@
+#include <iostream>
+
+using namespace std;
+
+void readArray(const int n, int** array) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> array[i][j];
+        }
+    }
+}
+
+int scalarProduct(int n, int* firstVector, int* secondVector) {
+    int result = 0;
+
+    for (int i = 0; i < n; ++i) {
+        result += firstVector[i] * secondVector[i];
+    }
+
+    return result;
+}
+
+int* handleArray(int n, int** array) {
+    int* biggestPair = new int[2];
+    biggestPair[0] = 0;
+    biggestPair[1] = 1;
+
+    for (int i = 1; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (scalarProduct(n, array[i], array[j]) >= scalarProduct(n, array[biggestPair[0]], array[biggestPair[1]])) {
+                biggestPair[0] = i;
+                biggestPair[1] = j;
+            }
+        }
+    }
+
+    return biggestPair;
+}
+
+void printResult(int n, int* biggestPair, int** array) {
+    cout << "Первоначальный массив: " << endl;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cout << array[i][j];
+
+            if (j < n - 1) {
+                cout << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    cout << "Строчки с самым большим скалярным произведением: " << endl;
+    for (int i = 0; i < n; ++i) {
+        cout << array[biggestPair[0]][i];
+
+        if (i < n - 1) {
+            cout << " ";
+        } else {
+            cout << endl;
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        cout << array[biggestPair[1]][i];
+
+        if (i < n - 1) {
+            cout << " ";
+        }
+    }
+    delete [] array;
+    delete biggestPair;
+}
+
+void printDiagonalElements(int n, int** array) {
+    int* diagonalElements = new int[n];
+
+    cout << "Побочная диагональ: ";
+    for (int i = 0; i < n; ++i) {
+        diagonalElements[i] = array[i][n - i - 1];
+        cout << diagonalElements[i] << " ";
+    }
+
+    cout << endl;
+
+    delete diagonalElements;
+}
+
+int main() {
+
+    int n;
+    cout << "Введите размерность матрицы: " << endl;
+    cin >> n;
+
+    int** dynArr = new int*[n];
+
+    for (int i = 0; i < n; ++i) {
+        dynArr[i] = new int[n];
+    }
+    readArray(n, dynArr);
+
+    int* biggestPair = handleArray(n, dynArr);
+
+    printDiagonalElements(n, dynArr);
+
+    printResult(n, biggestPair, dynArr);
+}
